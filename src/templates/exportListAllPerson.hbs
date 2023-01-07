@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Persons Detail</title>
+  </head>
+  <body>
+    <p style="color: #bd2c37; font-size: 18px; font-weight: bold; margin: 0px; padding: 20px 0px 10px 0px;">
+      Nominal Roll
+    </p>
+    {{#if data.length}}
+      <table cellspacing="0" bgcolor="#FFF" cellpadding="10" border="1px" width="100%" border-color="#dfe0e2" style="border-collapse: collapse;">
+        <tr style="background-color: #e3e3ff;">
+          <th>No.</th>
+          {{#headers}}
+            <th>{{this}}</th>
+          {{/headers}}
+        </tr>
+
+        {{#data}}
+          <tr>
+            <td style="color: #326371; font-size: 13px;">{{inc @index}}</td>
+            <td style="color: #326371; font-size: 13px;">
+              {{this.armyNo}}
+            </td>
+            <td style="color: #326371; font-size: 13px;">
+              {{this.rank}}
+            </td>
+            <td style="color: #326371; font-size: 13px;">
+              {{this.name}}
+            </td>
+            <td style="color: #326371; font-size: 13px;">
+              {{this.coy}}
+            </td>
+
+            <td style="color: #326371; font-size: 13px;">
+              {{this.pl}}
+            </td>
+          </tr>
+        {{/data}}
+
+      </table>
+    {{else}}
+      None
+    {{/if}}
+  </body>
+</html>
