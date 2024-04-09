@@ -83,4 +83,4 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(port, env.HOST, () => console.log(`server is on running on: ${env.PROTOCOL}${env.HOST}:${port}`));
+app.listen(port, () => console.log(`server is on running on: ${env.PROTOCOL}${env.HOST}:${port}`));
