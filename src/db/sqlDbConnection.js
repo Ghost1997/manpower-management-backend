@@ -28,8 +28,11 @@ const sequelize = new Sequelize(env.SQL_DATABASE, env.SQL_USER, env.SQL_PASSOWRD
   dialect: env.SQL_DIALECT,
   logging: false,
   dialectOptions: {
-    ssl: true,
-},
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // <<<<<<< YOU NEED THIS
+    },
+  },
   pool: {
     max: 5,
     min: 0,
