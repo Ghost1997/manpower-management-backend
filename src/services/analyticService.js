@@ -116,7 +116,7 @@ const paradeState = async (req, callback) => {
 const leaveSummery = async (req, callback) => {
   const getLeavesByMonth = await db.leave.findAll({
     raw: true,
-    attributes: [[db.sequelize.fn("month", db.sequelize.col("from_date")), "month"], [db.sequelize.fn("year", db.sequelize.col("from_date")), "year"], "id", "type", "fromDate", "toDate", "days"],
+    attributes: [[db.sequelize.literal('EXTRACT(month FROM "from_date")'), "month"], [db.sequelize.literal('EXTRACT(year FROM "from_date")'), "year"], "id", "type", "fromDate", "toDate", "days"],
     include: [{ model: db.pers, attributes: ["armyNo", "coy", "pl", "name", "rank"] }],
   });
 
@@ -148,18 +148,26 @@ const leaveSummery = async (req, callback) => {
 };
 const upcomingBirthday = async (req, callback) => {
   const today = moment.tz("Asia/Kolkata");
-  const nextWeek = moment.tz("Asia/Kolkata").add(5, "days");
+  const nextWeek = moment.tz("Asia/Kolkata").add(7, "days"); // Next 7 days
 
   const getUpcomingBirthday = await db.pers.findAll({
     attributes: ["armyNo", "coy", "pl", "dob", "name", "rank"],
     where: {
-      [db.Op.and]: [
-        db.Sequelize.where(db.Sequelize.fn("DATE_FORMAT", db.Sequelize.col("dob"), "%m-%d"), {
-          [db.Op.between]: [moment(today).format("MM-DD"), moment(nextWeek).format("MM-DD")],
-        }),
-      ],
+      dob: {
+        [db.Op.and]: [
+          db.Sequelize.literal(`EXTRACT('month' FROM dob) = ${today.month() + 1}`), // Month starts from 0 in moment.js
+          {
+            [db.Op.between]: [
+              db.Sequelize.literal(`DATE_TRUNC('year', dob) + INTERVAL '${today.year()} years' + INTERVAL '1 year'`),
+              db.Sequelize.literal(`DATE_TRUNC('year', dob) + INTERVAL '${today.year()} years' + INTERVAL '1 year' + INTERVAL '7 days'`),
+            ],
+          },
+        ],
+      },
     },
   });
+
   return callback(null, getUpcomingBirthday);
 };
+
 export default { companySummery, paradeState, leaveSummery, upcomingBirthday };
